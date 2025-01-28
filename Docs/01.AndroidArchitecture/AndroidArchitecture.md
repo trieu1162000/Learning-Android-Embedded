@@ -1,7 +1,7 @@
 # 01. Android Architecture
 
 ## Android vs Linux
-![AvL](../imgs/01.AndroidvsLinux.png)
+![AvL](../../imgs/01.AndroidvsLinux.png)
 ### Why using CFS?
 The Completely Fair Scheduler (CFS) is the default scheduler for the Linux kernel, designed to provide efficient, fair, and predictable scheduling for processes. Here are the key reasons for using CFS:
 
@@ -95,16 +95,16 @@ Binder IPC is a high-performance IPC mechanism developed specifically for the An
 - **Binder IPC** is tailored for Android, offering secure, efficient, and robust communication for modern applications.
 
 ## Linux Architecture Basic
-![LAB](../imgs/01.LinuxArchBasic.png)
+![LAB](../../imgs/01.LinuxArchBasic.png)
 
 ## Android Architecture
-![AA](../imgs/01.AndroidArch.png)
+![AA](../../imgs/01.AndroidArch.png)
 ### CDD Requirements?
 - Comply to CDD (Compatible Definition Docs) issued by Google to pass the CTS test.
 ### SELinux neverallowed
 - In SELinux, the neverallow rule is a policy construct that explicitly denies a specific set of permissions or access for certain domains or types. It is used by SELinux policy developers to enforce strong constraints and ensure that no policy ever grants the specified permissions. This rule is a powerful tool to prevent misconfigurations and potential security vulnerabilities.
 
-![AA1](../imgs/01.AndroidArch1.png)
+![AA1](../../imgs/01.AndroidArch1.png)
 ### Zygote is the root System Service in Android. It will spawn services and apps consequently:
 - system_server -> other system services
 - All applications
