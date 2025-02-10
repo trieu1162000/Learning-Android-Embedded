@@ -1,4 +1,4 @@
-# 01. Android Architecture
+# 1.1 Android Architecture
 
 ## Android vs Linux
 ![AvL](../../imgs/01.AndroidvsLinux.png)
