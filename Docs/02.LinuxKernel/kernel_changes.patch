@@ -1,0 +1,119 @@
+diff --git a/arch/arm/configs/tinker_board_defconfig b/arch/arm/configs/tinker_board_defconfig
+index e3cfcf7e25ce..9eb34b9a371b 100644
+--- a/arch/arm/configs/tinker_board_defconfig
++++ b/arch/arm/configs/tinker_board_defconfig
+@@ -364,6 +364,7 @@ CONFIG_USB_SIERRA_NET=y
+ CONFIG_WL_ROCKCHIP=y
+ CONFIG_WIFI_BUILD_MODULE=y
+ CONFIG_AP6XXX=m
++CONFIG_HELLO_WORLD_MODULE=m
+ CONFIG_RTL8723CS=m
+ CONFIG_RTL8723DS=m
+ CONFIG_INPUT_EVDEV=y
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 3295a019ee94..0225a88e1de0 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -233,4 +233,6 @@ source "drivers/boardinfo/Kconfig"
+ 
+ source "drivers/rknpu/Kconfig"
+ 
++source "drivers/c_trieu/hello_world/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 00e79e50db6d..69b57c51b389 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -198,3 +198,6 @@ obj-$(CONFIG_RK_NAND)		+= rk_nand/
+ obj-$(CONFIG_RK_HEADSET)	+= headset_observe/
+ obj-$(CONFIG_RK_FLASH)		+= rkflash/
+ obj-$(CONFIG_ROCKCHIP_RKNPU)	+= rknpu/
++
++# My custom kernel module
++obj-$(CONFIG_HELLO_WORLD_MODULE) += c_trieu/
+\ No newline at end of file
+diff --git a/drivers/c_trieu/Makefile b/drivers/c_trieu/Makefile
+new file mode 100644
+index 000000000000..97d2bf655316
+--- /dev/null
++++ b/drivers/c_trieu/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_HELLO_WORLD_MODULE) += hello_world/
+diff --git a/drivers/c_trieu/hello_world/Kconfig b/drivers/c_trieu/hello_world/Kconfig
+new file mode 100644
+index 000000000000..97274c41d158
+--- /dev/null
++++ b/drivers/c_trieu/hello_world/Kconfig
+@@ -0,0 +1,10 @@
++# Kconfig for Hello World Kernel Module
++
++menu "My Custom hello_world Kernel Modules"
++
++config HELLO_WORLD_MODULE
++    tristate "Hello World Kernel Module"
++    default m
++    help
++      This is a test kernel module that prints Hello World.
++endmenu
+diff --git a/drivers/c_trieu/hello_world/Makefile b/drivers/c_trieu/hello_world/Makefile
+new file mode 100644
+index 000000000000..b11b3a2d011f
+--- /dev/null
++++ b/drivers/c_trieu/hello_world/Makefile
+@@ -0,0 +1,28 @@
++MODULE_NAME := hello
++EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
++
++ARCH ?= arm
++CROSS_COMPILE ?=
++KVER := $(shell uname -r)
++KSRC := /lib/modules/$(KVER)/build
++MODDESTDIR := /lib/modules/$(KVER)/kernel/drivers/c_trieu/hello_world/
++INSTALL_PREFIX :=
++
++obj-$(CONFIG_HELLO_WORLD_MODULE) += hello.o
++
++all: modules
++
++modules:
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd) modules
++
++strip:
++	$(CROSS_COMPILE)strip $(MODULE_NAME).ko --strip-unneeded
++
++install:
++	mkdir -p $(MODDESTDIR)
++	install -p -m 644 $(MODULE_NAME).ko $(MODDESTDIR)
++	/sbin/depmod -a $(KVER)
++
++uninstall:
++	rm -f $(MODDESTDIR)/$(MODULE_NAME).ko
++	/sbin/depmod -a $(KVER)
+diff --git a/drivers/c_trieu/hello_world/hello.c b/drivers/c_trieu/hello_world/hello.c
+new file mode 100644
+index 000000000000..583339340fc9
+--- /dev/null
++++ b/drivers/c_trieu/hello_world/hello.c
+@@ -0,0 +1,21 @@
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/init.h>
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Trieu");
++MODULE_DESCRIPTION("Hello World Kernel Module");
++
++static int __init hello_init(void)
++{
++    printk(KERN_INFO "Hello, Kernel Module!\n");
++    return 0;
++}
++
++static void __exit hello_exit(void)
++{
++    printk(KERN_INFO "Goodbye, Kernel Module!\n");
++}
++
++module_init(hello_init);
++module_exit(hello_exit);
